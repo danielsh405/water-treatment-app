@@ -18,7 +18,8 @@ export default function Home() {
   const [results, setResults] = useState<Target[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const [keyword, setKeyword] = useState("industrial water treatment");
+  // 🔥 FIX: no default keyword (prevents filtering everything out)
+  const [keyword, setKeyword] = useState("");
   const [state, setState] = useState("All");
   const [minEmployees, setMinEmployees] = useState("15+");
   const [minRevenue, setMinRevenue] = useState("$7.5M+");
@@ -35,10 +36,14 @@ export default function Home() {
       forSaleOnly: String(forSaleOnly),
     });
 
-    const res = await fetch(`/api/find-deals?${params.toString()}`);
-    const data = await res.json();
+    try {
+      const res = await fetch(`/api/find-deals?${params.toString()}`);
+      const data = await res.json();
+      setResults(data);
+    } catch (err) {
+      console.error("Error fetching deals:", err);
+    }
 
-    setResults(data);
     setLoading(false);
   };
 
@@ -46,6 +51,7 @@ export default function Home() {
     <main style={{ padding: 40, fontFamily: "Arial, sans-serif" }}>
       <h1 style={{ marginBottom: 24 }}>Water Treatment Target Pipeline</h1>
 
+      {/* FILTERS */}
       <div
         style={{
           display: "grid",
@@ -60,6 +66,7 @@ export default function Home() {
           <input
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
+            placeholder="Search company, ownership, source, or status"
             style={{ width: "100%", padding: 10 }}
           />
         </div>
@@ -82,7 +89,9 @@ export default function Home() {
         </div>
 
         <div>
-          <label style={{ display: "block", marginBottom: 6 }}>Min Employees</label>
+          <label style={{ display: "block", marginBottom: 6 }}>
+            Min Employees
+          </label>
           <select
             value={minEmployees}
             onChange={(e) => setMinEmployees(e.target.value)}
@@ -95,7 +104,9 @@ export default function Home() {
         </div>
 
         <div>
-          <label style={{ display: "block", marginBottom: 6 }}>Min Revenue</label>
+          <label style={{ display: "block", marginBottom: 6 }}>
+            Min Revenue
+          </label>
           <select
             value={minRevenue}
             onChange={(e) => setMinRevenue(e.target.value)}
@@ -107,12 +118,23 @@ export default function Home() {
           </select>
         </div>
 
-        <button onClick={findDeals} style={{ padding: "10px 16px", height: 40 }}>
+        <button
+          onClick={findDeals}
+          style={{ padding: "10px 16px", height: 40 }}
+        >
           {loading ? "Searching..." : "Find Targets"}
         </button>
       </div>
 
-      <label style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 24 }}>
+      {/* CHECKBOX */}
+      <label
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 8,
+          marginBottom: 24,
+        }}
+      >
         <input
           type="checkbox"
           checked={forSaleOnly}
@@ -121,6 +143,7 @@ export default function Home() {
         For sale / succession signals only
       </label>
 
+      {/* TABLE */}
       <div style={{ overflowX: "auto" }}>
         <table
           style={{
