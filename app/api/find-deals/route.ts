@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
+  const searchParams = request.nextUrl.searchParams;
 
   const keyword = searchParams.get("keyword") || "";
   const state = searchParams.get("state") || "All";
