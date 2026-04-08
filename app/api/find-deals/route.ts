@@ -54,16 +54,16 @@ export async function GET(request: NextRequest) {
     },
   ];
 
-  if (keyword) {
-    const q = keyword.toLowerCase();
-    results = results.filter(
-      (r) =>
-        r.name.toLowerCase().includes(q) ||
-        r.ownership.toLowerCase().includes(q) ||
-        r.source.toLowerCase().includes(q) ||
-        r.status.toLowerCase().includes(q)
-    );
-  }
+if (keyword && keyword.trim() !== "" && keyword.toLowerCase() !== "industrial water treatment") {
+  const q = keyword.toLowerCase();
+  results = results.filter(
+    (r) =>
+      r.name.toLowerCase().includes(q) ||
+      r.ownership.toLowerCase().includes(q) ||
+      r.source.toLowerCase().includes(q) ||
+      r.status.toLowerCase().includes(q)
+  );
+}
 
   if (state !== "All") {
     results = results.filter((r) => r.state === state);
